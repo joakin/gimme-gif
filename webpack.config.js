@@ -18,5 +18,12 @@ module.exports = getConfig({
   clearBeforeBuild: true,
 
   // Autogenerate an index file
-  html: true
+  html: function (context) {
+    return {
+      'index.html': context.defaultTemplate({
+        title: 'Gimme gif 👊',
+        relative: true
+      })
+    }
+  }
 })
