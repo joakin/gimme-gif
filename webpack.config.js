@@ -26,12 +26,12 @@ module.exports = getConfig({
         head: '<link rel="manifest" href="manifest.json">'
       })),
       'manifest.json': `{
-        "name": "Web Application Manifest Sample",
+        "name": "Gimme gif 👊",
         "start_url": "index.html",
         "display": "standalone"
       }`,
       'cache.manifest': `CACHE MANIFEST
-# v3
+# v4
 ${context.main}
 ${context.css}
 manifest.json
