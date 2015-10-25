@@ -22,8 +22,14 @@ module.exports = getConfig({
     return {
       'index.html': addManifest(context.isDev, context.defaultTemplate({
         title: 'Gimme gif 👊',
-        relative: true
+        relative: true,
+        head: '<link rel="manifest" href="manifest.json">'
       })),
+      'manifest.json': `{
+        "name": "Web Application Manifest Sample",
+        "start_url": "index.html",
+        "display": "standalone"
+      }`,
       'cache.manifest': `CACHE MANIFEST
 # v2
 ${context.main}
