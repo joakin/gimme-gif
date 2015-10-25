@@ -20,10 +20,33 @@ module.exports = getConfig({
   // Autogenerate an index file
   html: function (context) {
     return {
-      'index.html': context.defaultTemplate({
+      'index.html': addManifest(context.isDev, context.defaultTemplate({
         title: 'Gimme gif 👊',
         relative: true
-      })
+      })),
+      'cache.manifest': `
+CACHE MANIFEST
+# v1
+${context.main}
+${context.css}
+
+# Use from network if available
+NETWORK:
+*
+`
     }
   }
 })
+
+function addManifest (dev, html) {
+  if (!dev) {
+    var parts = html.match(/(\<\!doctype html\>)(.*)/)
+    if (parts) {
+      html = parts[1] + '<html manifest="cache.manifest">' + parts[2] + '</html>'
+    } else {
+      console.log(parts)
+      throw new Error('Default template does not contain doctype')
+    }
+  }
+  return html
+}

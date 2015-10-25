@@ -1,0 +1,9 @@
+
+CACHE MANIFEST
+# v1
+gimme-gif.1.0.0.js
+gimme-gif.1.0.0.css
+
+# Use from network if available
+NETWORK:
+*
