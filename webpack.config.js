@@ -31,9 +31,10 @@ module.exports = getConfig({
         "display": "standalone"
       }`,
       'cache.manifest': `CACHE MANIFEST
-# v2
+# v3
 ${context.main}
 ${context.css}
+manifest.json
 
 # Use from network if available
 NETWORK:
