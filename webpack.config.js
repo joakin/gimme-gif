@@ -24,9 +24,8 @@ module.exports = getConfig({
         title: 'Gimme gif 👊',
         relative: true
       })),
-      'cache.manifest': `
-CACHE MANIFEST
-# v1
+      'cache.manifest': `CACHE MANIFEST
+# v2
 ${context.main}
 ${context.css}
 
