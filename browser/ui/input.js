@@ -2,19 +2,13 @@ import React from 'react'
 
 import './input.less'
 
-const Input = React.createClass({
-  displayName: 'Input',
-  render () {
-    return (
-      <form className='Input' onSubmit={this.submit}>
-        <input type='text' placeholder='search for gifs related to...' />
-      </form>
-    )
-  },
-  submit (e) {
-    e.preventDefault()
-    let text = e.target.querySelector('input').value
-    this.props.onSubmit(text)
-  }
-})
-export default Input
+const submit = (onSubmit) => (e) => {
+  e.preventDefault()
+  onSubmit(e.target.querySelector('input').value)
+}
+
+export default ({loading, onSubmit}) => (
+  <form className='Input' onSubmit={submit(onSubmit)}>
+    <input type='text' placeholder='search for gifs related to...' />
+  </form>
+)
