@@ -21,6 +21,7 @@ module.exports = getConfig({
   html: function (context) {
     return {
       'index.html': addManifest(context.isDev, context.defaultTemplate({
+        publicPath: './',
         title: 'Gimme gif 👊',
         relative: true,
         head: '<link rel="manifest" href="manifest.json">'
