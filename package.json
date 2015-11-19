@@ -1,6 +1,6 @@
 {
   "name": "gimme-gif",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "webapp for searching giphy for a gif",
   "main": "index.js",
   "scripts": {
