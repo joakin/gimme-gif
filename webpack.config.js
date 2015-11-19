@@ -31,7 +31,7 @@ module.exports = getConfig({
         "display": "standalone"
       }`,
       'cache.manifest': `CACHE MANIFEST
-# v4
+# v${context.package.version}
 ${context.main}
 ${context.css}
 manifest.json
