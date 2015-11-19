@@ -1,7 +1,7 @@
 CACHE MANIFEST
-# v4
-gimme-gif.1.0.0.js
-gimme-gif.1.0.0.css
+# v2.0.0
+gimme-gif.2.0.0.js
+gimme-gif.2.0.0.css
 manifest.json
 
 # Use from network if available
