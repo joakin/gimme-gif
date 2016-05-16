@@ -49,6 +49,7 @@ update msg model =
 
 -- View
 
+view : Model -> Html Msg
 view model =
   div
     [ class "App" ]
