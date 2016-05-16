@@ -1,59 +1,122 @@
-var getConfig = require('hjs-webpack')
+var path              = require( 'path' );
+var webpack           = require( 'webpack' );
+var merge             = require( 'webpack-merge' );
+var HtmlWebpackPlugin = require( 'html-webpack-plugin' );
+var autoprefixer      = require( 'autoprefixer' );
+var ExtractTextPlugin = require( 'extract-text-webpack-plugin' );
 
-module.exports = getConfig({
-  // entry point for the app
-  in: 'browser/index.js',
+console.log( 'WEBPACK GO!');
 
-  // Name or full path of output directory
-  // commonly named `www` or `public`. This
-  // is where your fully static site should
-  // end up for simple deployment.
-  out: 'public',
+// detemine build env
+var TARGET_ENV = process.env.npm_lifecycle_event === 'build' ? 'production' : 'development';
 
-  // This will destroy and re-create your
-  // `out` folder before building so you always
-  // get a fresh folder. Usually you want this
-  // but since it's destructive we make it
-  // false by default
-  clearBeforeBuild: true,
+// common webpack config
+var commonConfig = {
 
-  // Autogenerate an index file
-  html: function (context) {
-    return {
-      'index.html': addManifest(context.isDev, context.defaultTemplate({
-        publicPath: './',
-        title: 'Gimme gif 👊',
-        relative: true,
-        head: '<link rel="manifest" href="manifest.json">'
-      })),
-      'manifest.json': `{
-        "name": "Gimme gif 👊",
-        "start_url": "index.html",
-        "display": "standalone"
-      }`,
-      'cache.manifest': `CACHE MANIFEST
-# v${context.package.version}
-${context.main}
-${context.css}
-manifest.json
+  output: {
+    path:       path.resolve( __dirname, 'dist/' ),
+    filename: '[hash].js',
+  },
 
-# Use from network if available
-NETWORK:
-*
-`
+  resolve: {
+    modulesDirectories: ['node_modules'],
+    extensions:         ['', '.js', '.elm']
+  },
+
+  module: {
+    noParse: /\.elm$/
+  },
+
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: 'src/index.html',
+      inject:   'body',
+      filename: 'index.html'
+    })
+  ],
+
+  postcss: [ autoprefixer( { browsers: ['last 2 versions'] } ) ],
+
+}
+
+// additional webpack settings for local env (when invoked by 'npm start')
+if ( TARGET_ENV === 'development' ) {
+  console.log( 'Serving locally...');
+
+  module.exports = merge( commonConfig, {
+
+    entry: [
+      'webpack-dev-server/client?http://localhost:8080',
+      path.join( __dirname, 'src/index.js' )
+    ],
+
+    devServer: {
+      inline:   true,
+      progress: true,
+      port: 3006
+    },
+
+    module: {
+      loaders: [
+        {
+          test:    /\.elm$/,
+          exclude: [/elm-stuff/, /node_modules/],
+          loader:  'elm-webpack?verbose=true&warn=true'
+        },
+        {
+          test: /\.(css|less)$/,
+          loaders: [
+            'style-loader',
+            'css-loader',
+            'postcss-loader',
+            'less-loader'
+          ]
+        }
+      ]
     }
-  }
-})
 
-function addManifest (dev, html) {
-  if (!dev) {
-    var parts = html.match(/(\<\!doctype html\>)(.*)/)
-    if (parts) {
-      html = parts[1] + '<html manifest="cache.manifest">' + parts[2] + '</html>'
-    } else {
-      console.log(parts)
-      throw new Error('Default template does not contain doctype')
-    }
-  }
-  return html
+  });
+}
+
+// additional webpack settings for prod env (when invoked via 'npm run build')
+if ( TARGET_ENV === 'production' ) {
+  console.log( 'Building for prod...');
+
+  module.exports = merge( commonConfig, {
+
+    entry: path.join( __dirname, 'src/index.js' ),
+
+    module: {
+      loaders: [
+        {
+          test:    /\.elm$/,
+          exclude: [/elm-stuff/, /node_modules/],
+          loader:  'elm-webpack'
+        },
+        {
+          test: /\.(css|less)$/,
+          loader: ExtractTextPlugin.extract( 'style-loader', [
+            'css-loader',
+            'postcss-loader',
+            'less-loader'
+          ])
+        }
+      ]
+    },
+
+    plugins: [
+      new webpack.optimize.OccurenceOrderPlugin(),
+
+      // extract CSS into a separate file
+      new ExtractTextPlugin( './[hash].css', { allChunks: true } ),
+
+      // minify & mangle JS/CSS
+      new webpack.optimize.UglifyJsPlugin({
+          minimize:   true,
+          compressor: { warnings: false }
+          // mangle:  true
+      })
+    ]
+
+  });
 }

@@ -19,4 +19,4 @@ npm start
 npm run build
 ```
 
-Assets are built to the build folder.
+Assets are built to the dist folder.
