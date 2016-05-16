@@ -1,6 +1,7 @@
 module Components.App exposing (..)
 
 import Html exposing (..)
+import Html.App as App
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import String
@@ -8,37 +9,44 @@ import Http
 import Task
 import Json.Decode as Json
 
+import Components.SearchForm as SearchForm
 
 -- Model
 
 type alias Model =
-  { tags : String
+  { search : SearchForm.Model
   , fetching : Bool
   , gif : String
   , error : String
   }
 
 init : (Model, Cmd Msg)
-init = Model "" False "" "" ! []
+init =
+  let
+    (searchModel, searchCmds) = SearchForm.init
+  in
+    (Model searchModel False "" "", Cmd.map SearchForm searchCmds)
 
 
 -- Update
 
 type Msg
-  = UpdateTags String
-  | NewGif
+  = SearchForm SearchForm.Msg
   | GifReceive String
   | GifFail Http.Error
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-  case msg of
-    UpdateTags tags ->
-      { model | tags = tags } ! []
+  case Debug.log "MSG: " msg of
+    SearchForm SearchForm.Search ->
+      model ! [ getRandomGif model.search ]
 
-    NewGif ->
-      model ! [ getRandomGif model.tags ]
+    SearchForm msg ->
+      let
+        (searchModel, searchEffects) = SearchForm.update msg model.search
+      in
+        { model | search = searchModel } ! [ Cmd.map SearchForm searchEffects ]
 
     GifReceive url ->
       { model | gif = url } ! []
@@ -54,11 +62,7 @@ view model =
   div
     [ class "App" ]
     [ h1 [] [ text "Gimme a gif 👊" ]
-    , Html.form [ class "Input", onSubmit NewGif ]
-      [ input
-        [ placeholder "search for gifs related to..."
-        , onInput UpdateTags ] []
-      ]
+    , App.map SearchForm (SearchForm.view model.search)
     , error model.error
     , gif model.gif
     , p [ class "giphy" ]
