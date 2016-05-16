@@ -47,21 +47,6 @@ update msg model =
       { model | error = (toString err) } ! []
 
 
--- Effects
-
-getRandomGif : String -> Cmd Msg
-getRandomGif topic =
-  let
-    url = "http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=" ++ topic
-  in
-    Task.perform GifFail GifReceive (Http.get decodeGifUrl url)
-
-
-decodeGifUrl : Json.Decoder String
-decodeGifUrl =
-  Json.at ["data", "image_url"] Json.string
-
-
 -- View
 
 view model =
@@ -96,4 +81,19 @@ view model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.none
+
+
+-- Effects
+
+getRandomGif : String -> Cmd Msg
+getRandomGif topic =
+  let
+    url = "http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=" ++ topic
+  in
+    Task.perform GifFail GifReceive (Http.get decodeGifUrl url)
+
+
+decodeGifUrl : Json.Decoder String
+decodeGifUrl =
+  Json.at ["data", "image_url"] Json.string
 
