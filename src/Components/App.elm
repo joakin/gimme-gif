@@ -58,22 +58,33 @@ view model =
         [ placeholder "search for gifs related to..."
         , onInput UpdateTags ] []
       ]
-    , if String.isEmpty model.error then
-        text ""
-      else
-        div [ class "Error" ] [ text model.error ]
-    , if String.isEmpty model.gif then
-        text ""
-      else
-        div [ class "Gif" ]
-          [ input [ type' "text", readonly True, value model.gif ] []
-          , img [ src model.gif ] []
-          ]
+    , error model.error
+    , gif model.gif
     , p [ class "giphy" ]
       [ text "Powered by "
       , a [ href "http://giphy.com" ] [ text "giphy.com" ]
       ]
     ]
+
+
+gif url =
+  when url <|
+    div [ class "Gif" ]
+      [ input [ type' "text", readonly True, value url ] []
+      , img [ src url ] []
+      ]
+    
+
+error err =
+  when err <| div [ class "Error" ] [ text err ]
+
+
+when str node =
+  if String.isEmpty str then
+    text ""
+  else
+    node
+
 
 
 -- Subscriptions
