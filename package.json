@@ -7,7 +7,9 @@
     "start": "webpack-dev-server --hot --inline --content-base src/",
     "watch": "webpack --watch",
     "build": "rm -rf dist && NODE_ENV=production webpack -p && cp src/favicon.ico src/manifest.json dist/",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test:watch": "nodemon -e js,elm,html --exec 'npm test' --ignore tests.js",
+    "test": "pushd tests && elm-make TestRunner.elm --output tests.js && node tests.js && popd",
+    "test:install": "pushd tests && elm package install -y && popd"
   },
   "repository": {
     "type": "git",
@@ -39,6 +41,7 @@
     "less": "^2.5.3",
     "less-loader": "^2.2.1",
     "node-sass": "3.7.0",
+    "nodemon": "^1.9.2",
     "postcss-loader": "0.9.1",
     "sass-loader": "3.2.0",
     "style-loader": "0.13.1",
