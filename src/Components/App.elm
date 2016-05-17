@@ -1,50 +1,81 @@
 module Components.App exposing (..)
 
 import Html exposing (..)
+import Html.App as App
 import Html.Attributes exposing (..)
-import Html.Events exposing (..)
-import String
 import Http
 import Task
 import Json.Decode as Json
-
+import Components.SearchForm as SearchForm
+import Components.Gif as Gif
+import Components.Error as Error
 
 -- Model
 
 type alias Model =
-  { tags : String
+  { search : SearchForm.Model
   , fetching : Bool
   , gif : String
   , error : String
   }
 
 init : (Model, Cmd Msg)
-init = Model "" False "" "" ! []
+init =
+  Model (SearchForm.init) False "" "" ! []
 
 
 -- Update
 
 type Msg
-  = UpdateTags String
-  | NewGif
+  = SearchForm SearchForm.Msg
   | GifReceive String
   | GifFail Http.Error
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-  case msg of
-    UpdateTags tags ->
-      { model | tags = tags } ! []
-
-    NewGif ->
-      model ! [ getRandomGif model.tags ]
+  case Debug.log "MSG: " msg of
+    SearchForm sfmsg ->
+      let
+        (sfmodel, event) = SearchForm.update sfmsg model.search
+      in
+        ( { model | search = sfmodel }
+        , case event of
+            Just SearchForm.Search ->
+              getRandomGif model.search
+            Nothing ->
+              Cmd.none
+        )
 
     GifReceive url ->
       { model | gif = url } ! []
 
     GifFail err ->
       { model | error = (toString err) } ! []
+
+
+-- View
+
+view : Model -> Html Msg
+view model =
+  div
+    [ class "App" ]
+    [ h1 [] [ text "Gimme a gif 👊" ]
+    , App.map SearchForm (SearchForm.view model.search)
+    , Error.view model.error
+    , Gif.view model.gif
+    , p [ class "giphy" ]
+      [ text "Powered by "
+      , a [ href "http://giphy.com" ] [ text "giphy.com" ]
+      ]
+    ]
+
+
+-- Subscriptions
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
 
 
 -- Effects
@@ -60,40 +91,4 @@ getRandomGif topic =
 decodeGifUrl : Json.Decoder String
 decodeGifUrl =
   Json.at ["data", "image_url"] Json.string
-
-
--- View
-
-view model =
-  div
-    [ class "App" ]
-    [ h1 [] [ text "Gimme a gif 👊" ]
-    , Html.form [ class "Input", onSubmit NewGif ]
-      [ input
-        [ placeholder "search for gifs related to..."
-        , onInput UpdateTags ] []
-      ]
-    , if String.isEmpty model.error then
-        text ""
-      else
-        div [ class "Error" ] [ text model.error ]
-    , if String.isEmpty model.gif then
-        text ""
-      else
-        div [ class "Gif" ]
-          [ input [ type' "text", readonly True, value model.gif ] []
-          , img [ src model.gif ] []
-          ]
-    , p [ class "giphy" ]
-      [ text "Powered by "
-      , a [ href "http://giphy.com" ] [ text "giphy.com" ]
-      ]
-    ]
-
-
--- Subscriptions
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
 
