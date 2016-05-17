@@ -3,11 +3,10 @@ module Components.App exposing (..)
 import Html exposing (..)
 import Html.App as App
 import Html.Attributes exposing (..)
-import Html.Events exposing (..)
-import String
 import Http
 import Task
 import Json.Decode as Json
+import Components.Utils exposing (when)
 
 import Components.SearchForm as SearchForm
 
@@ -82,14 +81,6 @@ gif url =
 
 error err =
   when err <| div [ class "Error" ] [ text err ]
-
-
-when str node =
-  if String.isEmpty str then
-    text ""
-  else
-    node
-
 
 
 -- Subscriptions
