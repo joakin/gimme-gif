@@ -21,10 +21,7 @@ type alias Model =
 
 init : (Model, Cmd Msg)
 init =
-  let
-    (searchModel, searchCmds) = SearchForm.init
-  in
-    (Model searchModel False "" "", Cmd.map SearchForm searchCmds)
+  Model (SearchForm.init) False "" "" ! []
 
 
 -- Update
@@ -38,14 +35,17 @@ type Msg
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case Debug.log "MSG: " msg of
-    SearchForm SearchForm.Search ->
-      model ! [ getRandomGif model.search ]
-
-    SearchForm msg ->
+    SearchForm sfmsg ->
       let
-        (searchModel, searchEffects) = SearchForm.update msg model.search
+        (sfmodel, event) = SearchForm.update sfmsg model.search
       in
-        { model | search = searchModel } ! [ Cmd.map SearchForm searchEffects ]
+        ( { model | search = sfmodel }
+        , case event of
+            Just SearchForm.Search ->
+              getRandomGif model.search
+            Nothing ->
+              Cmd.none
+        )
 
     GifReceive url ->
       { model | gif = url } ! []
