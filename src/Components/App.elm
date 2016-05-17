@@ -6,9 +6,9 @@ import Html.Attributes exposing (..)
 import Http
 import Task
 import Json.Decode as Json
-import Components.Utils exposing (when)
-
 import Components.SearchForm as SearchForm
+import Components.Gif as Gif
+import Components.Error as Error
 
 -- Model
 
@@ -62,25 +62,13 @@ view model =
     [ class "App" ]
     [ h1 [] [ text "Gimme a gif 👊" ]
     , App.map SearchForm (SearchForm.view model.search)
-    , error model.error
-    , gif model.gif
+    , Error.view model.error
+    , Gif.view model.gif
     , p [ class "giphy" ]
       [ text "Powered by "
       , a [ href "http://giphy.com" ] [ text "giphy.com" ]
       ]
     ]
-
-
-gif url =
-  when url <|
-    div [ class "Gif" ]
-      [ input [ type' "text", readonly True, value url ] []
-      , img [ src url ] []
-      ]
-    
-
-error err =
-  when err <| div [ class "Error" ] [ text err ]
 
 
 -- Subscriptions
