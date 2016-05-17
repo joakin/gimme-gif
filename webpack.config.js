@@ -4,6 +4,7 @@ var merge             = require('webpack-merge');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var autoprefixer      = require('autoprefixer');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var OfflinePlugin     = require('offline-plugin');
 
 console.log( 'WEBPACK GO!');
 
@@ -109,6 +110,13 @@ if ( TARGET_ENV === 'production' ) {
 
       // extract CSS into a separate file
       new ExtractTextPlugin( './[hash].css', { allChunks: true } ),
+
+      new OfflinePlugin({
+        externals: [
+          'manifest.json',
+          'favicon.ico'
+        ]
+      }),
 
       // minify & mangle JS/CSS
       new webpack.optimize.UglifyJsPlugin({
