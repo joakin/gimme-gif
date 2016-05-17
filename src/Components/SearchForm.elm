@@ -26,7 +26,7 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-  Html.form [ class "Input", onSubmit Search ]
+  Html.form [ class "SearchForm", onSubmit Search ]
     [ input
       [ placeholder "search for gifs related to..."
       , onInput UpdateQuery ] []
