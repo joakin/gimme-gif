@@ -6,7 +6,7 @@
   "scripts": {
     "start": "webpack-dev-server --hot --inline --content-base src/",
     "watch": "webpack --watch",
-    "build": "rm -rf dist && NODE_ENV=production webpack -p && cp src/favicon.ico dist/",
+    "build": "rm -rf dist && NODE_ENV=production webpack -p && cp src/favicon.ico src/manifest.json dist/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
