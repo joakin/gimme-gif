@@ -112,6 +112,13 @@ if ( TARGET_ENV === 'production' ) {
       new ExtractTextPlugin( './[hash].css', { allChunks: true } ),
 
       new OfflinePlugin({
+        caches: {
+          main: [
+            'manifest.json',
+            'favicon.ico',
+            ':rest:'
+          ]
+        },
         externals: [
           'manifest.json',
           'favicon.ico'
