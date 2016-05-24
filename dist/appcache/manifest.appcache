@@ -1,7 +1,9 @@
 CACHE MANIFEST
-#ver:5/17/2016, 1:52:25 PM
+#ver:5/24/2016, 10:55:00 AM
 
 CACHE:
+../manifest.json
+../favicon.ico
 ../53d087ab8b5dfef41e9b.js
 .././53d087ab8b5dfef41e9b.css
 ../
