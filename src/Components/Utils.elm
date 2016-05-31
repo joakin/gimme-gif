@@ -6,8 +6,7 @@ import String
 
 when : String -> Html a -> Html a
 when str node =
-  if String.isEmpty str then
-    text ""
-  else
-    node
-
+    if String.isEmpty str then
+        text ""
+    else
+        node
