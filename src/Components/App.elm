@@ -45,20 +45,18 @@ update msg model =
                 ( sfmodel, event ) =
                     SearchForm.update sfmsg model.search
             in
-                ( { model | search = sfmodel }
-                , case event of
+                case event of
                     Just Search ->
-                        getRandomGif model.search
+                        { model | fetching = True } ! [ getRandomGif model.search ]
 
                     Nothing ->
-                        Cmd.none
-                )
+                        { model | search = sfmodel } ! []
 
         GifReceive url ->
-            { model | gif = url } ! []
+            { model | fetching = False, gif = url } ! []
 
         GifFail err ->
-            { model | error = (toString err) } ! []
+            { model | fetching = False, error = (toString err) } ! []
 
 
 
@@ -71,7 +69,10 @@ view model =
         [ h1 [] [ text "Gimme a gif 👊" ]
         , App.map SearchForm (SearchForm.view model.search)
         , Error.view model.error
-        , Gif.view model.gif
+        , if model.fetching then
+            p [] [ text "Loading..." ]
+          else
+            Gif.view model.gif
         , p [ class "giphy" ]
             [ text "Powered by "
             , a [ href "http://giphy.com" ] [ text "giphy.com" ]
