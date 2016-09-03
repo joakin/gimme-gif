@@ -33,7 +33,13 @@ var commonConfig = {
       template: 'src/index.html',
       inject:   'body',
       filename: 'index.html'
-    })
+    }),
+
+    new webpack.DefinePlugin({
+      'process.env': {
+        'NODE_ENV': `"${process.env.NODE_ENV}"`
+      }
+    }),
   ],
 
   postcss: [ autoprefixer( { browsers: ['last 2 versions'] } ) ],
