@@ -1,30 +1,63 @@
-module Components.App exposing (..)
+port module Components.App exposing (..)
 
 import Html exposing (..)
-import Html.App as App
 import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 import Http
 import Task
 import Json.Decode as Json
-import Components.SearchForm as SearchForm exposing (Event(Search))
-import Components.Gif as Gif
-import Components.Error as Error
+import String
+import Dict exposing (Dict)
+
+
+-- Ports
+
+
+{-| Save a favorite in storage by query and url
+-}
+port saveFav : ( String, String ) -> Cmd msg
+
 
 
 -- Model
 
 
-type alias Model =
-    { search : SearchForm.Model
-    , fetching : Bool
-    , gif : String
-    , error : String
+type alias Flags =
+    { favs : Json.Value
     }
 
 
-init : ( Model, Cmd Msg )
-init =
-    Model (SearchForm.init) False "" "" ! []
+type alias Favs =
+    Dict String (List String)
+
+
+jsonToFavs : Json.Value -> Result String Favs
+jsonToFavs json =
+    Json.decodeValue (Json.dict <| Json.list <| Json.string)
+        json
+
+
+type alias Model =
+    { query : String
+    , fetching : Bool
+    , gif : String
+    , error : String
+    , favs : Favs
+    }
+
+
+init : Flags -> ( Model, Cmd Msg )
+init { favs } =
+    let
+        favs' =
+            case (jsonToFavs favs) of
+                Ok fs ->
+                    fs
+
+                Err err ->
+                    Dict.empty
+    in
+        Model "" False "" "" favs' ! []
 
 
 
@@ -32,7 +65,8 @@ init =
 
 
 type Msg
-    = SearchForm SearchForm.Msg
+    = Submit
+    | UpdateQuery String
     | GifReceive String
     | GifFail Http.Error
 
@@ -40,17 +74,11 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case Debug.log "MSG: " msg of
-        SearchForm sfmsg ->
-            let
-                ( sfmodel, event ) =
-                    SearchForm.update sfmsg model.search
-            in
-                case event of
-                    Just Search ->
-                        { model | fetching = True } ! [ getRandomGif model.search ]
+        UpdateQuery newQuery ->
+            { model | query = newQuery } ! []
 
-                    Nothing ->
-                        { model | search = sfmodel } ! []
+        Submit ->
+            { model | fetching = True } ! [ getRandomGif model.query ]
 
         GifReceive url ->
             { model | fetching = False, gif = url } ! []
@@ -67,17 +95,68 @@ view : Model -> Html Msg
 view model =
     div [ class "App" ]
         [ h1 [] [ text "Gimme a gif 👊" ]
-        , App.map SearchForm (SearchForm.view model.search)
-        , Error.view model.error
+        , searchForm model.query
+        , error model.error
         , if model.fetching then
             p [] [ text "Loading..." ]
           else
-            Gif.view model.gif
+            gif model.gif
+        , favs model.favs
         , p [ class "giphy" ]
             [ text "Powered by "
             , a [ href "http://giphy.com" ] [ text "giphy.com" ]
             ]
         ]
+
+
+gif : String -> Html a
+gif url =
+    when url
+        <| div [ class "Gif" ]
+            [ input [ type' "text", readonly True, value url ] []
+            , img [ src url ] []
+            ]
+
+
+error : String -> Html a
+error err =
+    when err <| div [ class "Error" ] [ text """
+    No result found!
+    """ ]
+
+
+searchForm : String -> Html Msg
+searchForm _ =
+    Html.form [ class "SearchForm", onSubmit Submit ]
+        [ input
+            [ placeholder "search for gifs related to..."
+            , onInput UpdateQuery
+            ]
+            []
+        ]
+
+
+favs : Favs -> Html Msg
+favs fs =
+    let
+        favsByQuery : ( String, List String ) -> Html Msg
+        favsByQuery ( query, favs' ) =
+            div []
+                [ h3 [] [ text query ]
+                , div [] <| List.map (\f -> img [ height 80, src f ] []) favs'
+                ]
+    in
+        div []
+            <| List.map favsByQuery
+                (Dict.toList fs)
+
+
+when : String -> Html a -> Html a
+when str node =
+    if String.isEmpty str then
+        text ""
+    else
+        node
 
 
 
@@ -104,4 +183,7 @@ getRandomGif topic =
 
 decodeGifUrl : Json.Decoder String
 decodeGifUrl =
-    Json.at [ "data", "image_url" ] Json.string
+    Json.oneOf
+        [ Json.at [ "data", "image_url" ] Json.string
+        , Json.fail "No result found"
+        ]
