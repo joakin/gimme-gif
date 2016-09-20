@@ -111,8 +111,8 @@ view model =
 
 gif : String -> Html a
 gif url =
-    when url
-        <| div [ class "Gif" ]
+    when url <|
+        div [ class "Gif" ]
             [ input [ type' "text", readonly True, value url ] []
             , img [ src url ] []
             ]
@@ -146,8 +146,8 @@ favs fs =
                 , div [] <| List.map (\f -> img [ height 80, src f ] []) favs'
                 ]
     in
-        div []
-            <| List.map favsByQuery
+        div [] <|
+            List.map favsByQuery
                 (Dict.toList fs)
 
 
