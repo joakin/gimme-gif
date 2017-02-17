@@ -49,7 +49,7 @@ type alias Model =
 init : Flags -> ( Model, Cmd Msg )
 init { favs } =
     let
-        favs' =
+        favs_ =
             case (jsonToFavs favs) of
                 Ok fs ->
                     fs
@@ -57,7 +57,7 @@ init { favs } =
                 Err err ->
                     Dict.empty
     in
-        Model "" False "" "" favs' ! []
+        Model "" False "" "" favs_ ! []
 
 
 
@@ -113,7 +113,7 @@ gif : String -> Html a
 gif url =
     when url <|
         div [ class "Gif" ]
-            [ input [ type' "text", readonly True, value url ] []
+            [ input [ type_ "text", readonly True, value url ] []
             , img [ src url ] []
             ]
 
@@ -140,10 +140,10 @@ favs : Favs -> Html Msg
 favs fs =
     let
         favsByQuery : ( String, List String ) -> Html Msg
-        favsByQuery ( query, favs' ) =
+        favsByQuery ( query, favs_ ) =
             div []
                 [ h3 [] [ text query ]
-                , div [] <| List.map (\f -> img [ height 80, src f ] []) favs'
+                , div [] <| List.map (\f -> img [ height 80, src f ] []) favs_
                 ]
     in
         div [] <|
