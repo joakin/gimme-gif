@@ -72,7 +72,7 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case Debug.log "MSG: " msg of
+    case msg of
         UpdateQuery newQuery ->
             { model | query = newQuery } ! []
 
