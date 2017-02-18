@@ -1,0 +1,27 @@
+{
+  "name": "gimme-gif",
+  "version": "1.0.0",
+  "description": "This project is bootstrapped with [Create Elm App](https://github.com/halfzebra/create-elm-app).",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "start": "elm-app start",
+    "build": "elm-app build && cp src/*.{ico,json} dist/ && sw-precache --root=dist --static-file-globs='dist/**/*.*'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joakin/gimme-gif.git"
+  },
+  "author": "Joaquin Oltra <joaquin@chimeces.com> (http://chimeces.com)",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/joakin/gimme-gif/issues"
+  },
+  "homepage": "https://github.com/joakin/gimme-gif#readme",
+  "devDependencies": {
+    "sw-precache": "^5.0.0"
+  }
+}

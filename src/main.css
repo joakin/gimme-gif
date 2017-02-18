@@ -1,0 +1,57 @@
+body {
+  margin: 0;
+  text-align: center;
+  color: #293c4b;
+}
+
+img {
+  margin: 20px 0;
+  max-width: 200px;
+}
+
+.App {
+  width: 80%;
+  margin: auto;
+  text-align: center;
+}
+
+.App h1 { font-weight: normal; }
+
+.App,
+.App input,
+.App select,
+.App textarea,
+.App button {
+  font-size: 100%;
+  font-family: serif;
+}
+
+.App .giphy { margin-top: 2em; }
+
+.Gif >* {
+  display: block;
+  max-width: 100%;
+  margin: auto auto 1em auto;
+}
+.Gif input {
+  padding: 0.3em 0.5em;
+  width: 80%;
+}
+
+.Error {
+  font-style: italic;
+  font-size: 0.85em;
+  background-color: #fff5f5;
+  color: #BF616A;
+  padding: 0.5em 1em;
+  margin: auto;
+  width: 80%;
+  margin-bottom: 1em;
+}
+
+.SearchForm { margin-bottom: 2em; }
+.SearchForm input {
+  padding: 0.3em 0.5em;
+  width: 80%;
+  text-align: center;
+}
