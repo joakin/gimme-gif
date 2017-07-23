@@ -10,7 +10,7 @@
     "start": "PUBLIC_URL=./ elm-app start",
     "build": "PUBLIC_URL=./ elm-app build",
     "sw": "sw-precache --root=build --static-file-globs='build/**/*.*'",
-    "test": "elm-test"
+    "test": "elm-app test"
   },
   "repository": {
     "type": "git",
