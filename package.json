@@ -24,7 +24,6 @@
   "homepage": "https://github.com/joakin/gimme-gif#readme",
   "devDependencies": {
     "elm": "^0.18.0",
-    "elm-test": "0.18.0",
     "sw-precache": "^5.0.0"
   }
 }
