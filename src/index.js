@@ -1,6 +1,5 @@
-require('./main.css');
-var Elm = require('./Main.elm');
+import "./main.css";
+import * as Elm from "./Main.elm";
 
-var root = document.getElementById('main');
-
-Elm.Main.embed(root, {favs: []});
+const root = document.getElementById("main");
+Elm.Main.embed(root, { favs: [] });
