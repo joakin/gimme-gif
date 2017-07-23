@@ -7,8 +7,8 @@
     "test": "tests"
   },
   "scripts": {
-    "start": "elm-app start",
-    "build": "elm-app build",
+    "start": "PUBLIC_URL=./ elm-app start",
+    "build": "PUBLIC_URL=./ elm-app build",
     "sw": "sw-precache --root=build --static-file-globs='build/**/*.*'",
     "test": "elm-test"
   },
