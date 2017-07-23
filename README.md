@@ -7,7 +7,13 @@ version.
 
 # Dev
 
-After a `npm install && elm package install -y` just do:
+After: 
+
+* `npm install`
+* `elm package install -y`
+* `npm install -g create-elm-app`
+
+Do:
 
 ```
 npm start
