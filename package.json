@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "start": "PUBLIC_URL=./ elm-app start",
+    "start": "ELM_DEBUGGER=true PUBLIC_URL=./ elm-app start",
     "build": "PUBLIC_URL=./ elm-app build",
     "sw": "sw-precache --root=build --static-file-globs='build/**/*.*'",
     "test": "elm-app test"
